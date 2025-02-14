@@ -1,9 +1,11 @@
+const API_URL = "https://website-wlvy.onrender.com";
+
 async function uploadResume() {
     let file = document.getElementById('resume').files[0];
     let formData = new FormData();
     formData.append("file", file);
 
-    let response = await fetch("https://your-api-url.onrender.com/upload_resume/", {
+    let response = await fetch(`${API_URL}/upload_resume/`, {
         method: "POST",
         body: formData
     });
@@ -17,7 +19,7 @@ async function fetchJobDescription() {
     let formData = new FormData();
     formData.append("url", url);
 
-    let response = await fetch("https://your-api-url.onrender.com/fetch_job_description/", {
+    let response = await fetch(`${API_URL}/fetch_job_description/`, {
         method: "POST",
         body: formData
     });
@@ -30,7 +32,7 @@ async function generateCoverLetter() {
     let resume_text = localStorage.getItem("resume_text");
     let job_description = localStorage.getItem("job_description");
 
-    let response = await fetch("https://your-api-url.onrender.com/generate_cover_letter/", {
+    let response = await fetch(`${API_URL}/generate_cover_letter/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_text, job_description })
