@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume to Cover Letter</title>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h2>Upload Resume</h2>
+    <input type="file" id="resume">
+    <button onclick="uploadResume()">Upload</button>
+
+    <h2>Job Description URL</h2>
+    <input type="text" id="job_url" placeholder="Paste Job URL">
+    <button onclick="fetchJobDescription()">Fetch</button>
+
+    <h2>Generated Cover Letter</h2>
+    <button onclick="generateCoverLetter()">Generate</button>
+    <pre id="cover_letter"></pre>
+</body>
+</html>
