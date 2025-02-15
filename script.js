@@ -28,16 +28,15 @@ async function fetchJobDescription() {
     localStorage.setItem("job_description", data.job_description);
 }
 
-async function generateCoverLetter() {
-    let resume_text = localStorage.getItem("resume_text");
-    let job_description = localStorage.getItem("job_description");
-
-    let response = await fetch(`${API_URL}/generate_cover_letter/`, {
+async function generateCoverLetter(resume, jobDescription) {
+    const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume_text, job_description })
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ resume, job_description: jobDescription }),
     });
 
-    let data = await response.json();
-    document.getElementById("cover_letter").innerText = data.cover_letter;
+    const data = await response.json();
+    console.log("Generated Cover Letter:", data.cover_letter);
 }
