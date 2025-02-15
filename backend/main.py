@@ -1,9 +1,9 @@
-from fastapi import FastAPI, File, UploadFile, Form
+import os
+from fastapi import FastAPI, HTTPException , File, UploadFile, Form
 from pydantic import BaseModel
-import pdfplumber
 import requests
 from bs4 import BeautifulSoup
-import openai
+
 
 app = FastAPI()
 
