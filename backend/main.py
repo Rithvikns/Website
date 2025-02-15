@@ -7,6 +7,8 @@ import openai
 
 app = FastAPI()
 
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allow all origins (or specify your frontend URL)
