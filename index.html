@@ -7,18 +7,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Job Application Helper</h1>
-    <input type="file" id="resume">
-    <button onclick="uploadResume()">Upload Resume</button>
-    
-    <input type="text" id="job_url" placeholder="Paste job description URL">
-    <button onclick="fetchJobDescription()">Fetch Job Description</button>
-    
-    <button onclick="generateCoverLetter()">Generate Cover Letter</button>
-    
-    <h2>Generated Cover Letter:</h2>
-    <pre id="cover_letter">Waiting for input...</pre>
-    
+    <div class="container">
+        <h1>Job Application Helper</h1>
+
+        <!-- Upload Resume Section -->
+        <div class="section">
+            <h2>Upload Your Resume</h2>
+            <input type="file" id="resume">
+            <button onclick="uploadResume()">Upload Resume</button>
+        </div>
+
+        <!-- Fetch Job Description Section -->
+        <div class="section">
+            <h2>Fetch Job Description</h2>
+            <input type="text" id="job_url" placeholder="Paste job description URL">
+            <button onclick="fetchJobDescription()">Fetch</button>
+            <h3>Job Description:</h3>
+            <pre id="job_description">Waiting for input...</pre>
+        </div>
+
+        <!-- Generate Cover Letter Section -->
+        <div class="section">
+            <h2>Generate Cover Letter</h2>
+            <button onclick="generateCoverLetter(localStorage.getItem('resume_text'), localStorage.getItem('job_description'))">
+                Generate Cover Letter
+            </button>
+            <h3>Generated Cover Letter:</h3>
+            <pre id="cover_letter">Waiting for input...</pre>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
