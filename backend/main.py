@@ -41,18 +41,20 @@ async def fetch_job_description(url: str = Form(...)):
 @app.post("/generate_cover_letter/")
 async def generate_cover_letter(request: CoverLetterRequest):
     prompt = f"""
-    Write a professional cover letter based on the following resume and job description:
-    
+    Generate a professional cover letter based on the following:
     Resume: {request.resume_text}
-    
     Job Description: {request.job_description}
+    I need the cover letter in paragraph wise.
+    The first paragraph should tell that why the resume person choose to apply for this role.
+    the second , third , fourth paragraph shold tell about how the top three job requiremnets matches your skills .
+    last paragraph is for thanks and asking for interview
     """
     
     response = openai.ChatCompletion.create(
         model="gpt-4",
-        messages=[{"role": "system", "content": "You are an expert cover letter writer."},
-                  {"role": "user", "content": prompt}]
+        messages=[{"role": "system", "content": prompt}]
     )
     
-    cover_letter = response["choices"][0]["message"]["content"]
+    cover_letter = response['choices'][0]['message']['content']
+    
     return {"cover_letter": cover_letter}
