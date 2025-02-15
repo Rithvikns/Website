@@ -7,54 +7,53 @@ import openai
 
 app = FastAPI()
 
-openai.api_key = "your-openai-api-key"
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (or specify your frontend URL)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
+if not HUGGINGFACE_TOKEN:
+    raise ValueError("❌ Hugging Face token is missing! Set HUGGINGFACE_TOKEN in environment variables.")
+
+API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct"
+HEADERS = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+
+# Request model
 class CoverLetterRequest(BaseModel):
-    resume_text: str
+    resume: str
     job_description: str
 
-@app.get("/")
-def home():
-    return {"message": "Welcome to Resume Cover Letter Generator"}
-
-@app.post("/upload_resume/")
-async def upload_resume(file: UploadFile = File(...)):
-    if file.filename.endswith(".pdf"):
-        with pdfplumber.open(file.file) as pdf:
-            text = "\n".join([page.extract_text() for page in pdf.pages if page.extract_text()])
-    else:
-        return {"error": "Only PDF files are supported"}
-    return {"resume_text": text}
-
-@app.post("/fetch_job_description/")
-async def fetch_job_description(url: str = Form(...)):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        paragraphs = soup.find_all("p")
-        job_description = " ".join([p.text for p in paragraphs])
-        return {"job_description": job_description}
-    else:
-        return {"error": "Failed to fetch job description"}
+def query_huggingface(payload):
+    """Sends a request to the Hugging Face Inference API and returns the response."""
+    response = requests.post(API_URL, headers=HEADERS, json=payload)
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return response.json()
 
 @app.post("/generate_cover_letter/")
 async def generate_cover_letter(request: CoverLetterRequest):
-    prompt = f"""
-    Generate a professional cover letter based on the following:
-    Resume: {request.resume_text}
-    Job Description: {request.job_description}
-    I need the cover letter in paragraph wise.
-    The first paragraph should tell that why the resume person choose to apply for this role.
-    the second , third , fourth paragraph shold tell about how the top three job requiremnets matches your skills .
-    last paragraph is for thanks and asking for interview
-    """
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    
-    cover_letter = response['choices'][0]['message']['content']
-    
-    return {"cover_letter": cover_letter}
+    """Generates a cover letter using the Hugging Face model."""
+    try:
+        prompt = (
+            f"Write a professional cover letter based on this resume:\n{request.resume}\n"
+            f"And this job description:\n{request.job_description}\n"
+            f"I need the cover letter in paragraph wise\n"
+            f"The first paragraph should tell that why the resume person choose to apply for this role\n"
+            f"the second , third , fourth paragraph shold tell about how the top three job requiremnets matches your skills\n"
+            f"last paragraph is for thanks and asking for interview"
+        )
+
+        # Call Hugging Face API
+        output = query_huggingface({"inputs": prompt})
+
+        # Extract generated text
+        generated_text = output[0]["generated_text"] if isinstance(output, list) else output
+
+        return {"cover_letter": generated_text}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
