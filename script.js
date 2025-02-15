@@ -19,13 +19,23 @@ async function fetchJobDescription() {
     let formData = new FormData();
     formData.append("url", url);
 
-    let response = await fetch(`${API_URL}/fetch_job_description/`, {
-        method: "POST",
-        body: formData
-    });
+    try {
+        let response = await fetch(`${API_URL}/fetch_job_description/`, {
+            method: "POST",
+            body: formData
+        });
 
-    let data = await response.json();
-    localStorage.setItem("job_description", data.job_description);
+        let data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("job_description", data.job_description);
+            document.getElementById("job_description").innerText = data.job_description; // Display it in UI
+        } else {
+            document.getElementById("job_description").innerText = `Error: ${data.detail}`;
+        }
+    } catch (error) {
+        document.getElementById("job_description").innerText = "Error fetching job description!";
+    }
 }
 
 async function generateCoverLetter(resume, jobDescription) {
