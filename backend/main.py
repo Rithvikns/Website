@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException , File, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
