@@ -4,18 +4,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
 
 app = FastAPI()
 
+load_dotenv()
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
+allow_origins = ["https://rithvikns.github.io/Website/"] 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (or specify your frontend URL)
+    allow_origins=allow_origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 if not HUGGINGFACE_TOKEN:
@@ -28,13 +31,49 @@ HEADERS = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
 class CoverLetterRequest(BaseModel):
     resume: str
     job_description: str
-
+    
+@app.get("/")
+def home():
+    return {"message": "Welcome to Resume Cover Letter Generator"}
+    
 def query_huggingface(payload):
     """Sends a request to the Hugging Face Inference API and returns the response."""
     response = requests.post(API_URL, headers=HEADERS, json=payload)
+    
     if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.json())
-    return response.json()
+        try:
+            error_detail = response.json()
+        except requests.exceptions.JSONDecodeError:
+            error_detail = response.text  # In case the error response isn't JSON
+        raise HTTPException(status_code=response.status_code, detail=error_detail)
+
+    try:
+        output = response.json()
+        if isinstance(output, list) and "generated_text" in output[0]:
+            return output[0]["generated_text"]
+        else:
+            return {"error": "Unexpected response format from Hugging Face API"}
+    except (KeyError, IndexError):
+        raise HTTPException(status_code=500, detail="Invalid response from Hugging Face API")
+
+
+@app.post("/fetch_job_description/")
+async def fetch_job_description(url: str = Form(...)):
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code != 200:
+        return {"error": "Failed to fetch job description"}
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    # Try multiple methods to extract job description
+    job_description = " ".join([p.text for p in soup.find_all(["p", "li"])])
+    if not job_description.strip():
+        job_description = soup.get_text()
+
+    return {"job_description": job_description.strip() if job_description else "No job description found"}
+
 
 @app.post("/generate_cover_letter/")
 async def generate_cover_letter(request: CoverLetterRequest):
