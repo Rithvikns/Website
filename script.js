@@ -25,19 +25,22 @@ async function fetchJobDescription() {
             body: formData
         });
 
-        let data = await response.json();
+        console.log("Raw Response:", response);
 
-        if (response.ok) {
+        let data = await response.json();
+        console.log("API Response:", data);
+
+        if (response.ok && data.job_description) {
             localStorage.setItem("job_description", data.job_description);
-            document.getElementById("job_description").innerText = data.job_description; // Display it in UI
+            document.getElementById("job_description").innerText = data.job_description;
         } else {
-            document.getElementById("job_description").innerText = `Error: ${data.detail}`;
+            document.getElementById("job_description").innerText = `Error: ${data.detail || "Unknown error"}`;
         }
     } catch (error) {
+        console.error("Fetch error:", error);
         document.getElementById("job_description").innerText = "Error fetching job description!";
     }
 }
-
 async function generateCoverLetter(resume, jobDescription) {
     const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
         method: "POST",
