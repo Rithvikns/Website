@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from fastapi.responses import JSONResponse
 
 
 app = FastAPI()
@@ -56,23 +57,26 @@ def query_huggingface(payload):
     except (KeyError, IndexError):
         raise HTTPException(status_code=500, detail="Invalid response from Hugging Face API")
 
-
 @app.post("/fetch_job_description/")
 async def fetch_job_description(url: str = Form(...)):
     headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
     
-    if response.status_code != 200:
-        return {"error": "Failed to fetch job description"}
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    
-    # Try multiple methods to extract job description
-    job_description = " ".join([p.text for p in soup.find_all(["p", "li"])])
-    if not job_description.strip():
-        job_description = soup.get_text()
+        soup = BeautifulSoup(response.text, "html.parser")
+        paragraphs = soup.find_all("p")
+        job_description = " ".join([p.text.strip() for p in paragraphs if p.text.strip()])
 
-    return {"job_description": job_description.strip() if job_description else "No job description found"}
+        if not job_description:
+            return JSONResponse(status_code=404, content={"detail": "No job description found on the page."})
+
+        return JSONResponse(status_code=200, content={"job_description": job_description})
+
+    except requests.exceptions.RequestException as e:
+        return JSONResponse(status_code=500, content={"detail": f"Failed to fetch job description: {str(e)}"})
+
 
 
 @app.post("/generate_cover_letter/")
