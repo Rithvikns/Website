@@ -6,6 +6,9 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
+from flask_cors import CORS
+
+CORS(app)
 
 
 app = FastAPI()
