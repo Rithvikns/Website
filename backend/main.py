@@ -3,15 +3,15 @@ from fastapi import FastAPI, HTTPException , File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
+from flask import Flask, request, jsonify
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from flask_cors import CORS
 
 
-
-app = FastAPI()
-CORS(app)
+app = Flask(__name__)
+CORS(app, origins=["https://rithvikns.github.io"])
 
 
 
