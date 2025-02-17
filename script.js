@@ -2,24 +2,45 @@ const API_URL = "https://website-wlvy.onrender.com";
 
 async function uploadResume() {
     try {
-        let formData = new FormData();
-        formData.append("resume", document.getElementById("resume").files[0]);
+        // Get the uploaded file from the input
+        let fileInput = document.getElementById("resume");
+        let file = fileInput.files[0];
 
-        let response = await fetch(`${API_URL}/upload_resume/`, {
-            method: "POST",
-            body: formData
-        });
+        if (file) {
+            // Log the details of the uploaded file (name and type)
+            console.log("Uploading file:", file.name);
+            console.log("File type:", file.type);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            // Prepare FormData for file upload
+            let formData = new FormData();
+            formData.append("resume", file);
+
+            // Send POST request to the server
+            let response = await fetch(`${API_URL}/upload_resume/`, {
+                method: "POST",
+                body: formData
+            });
+
+            // Check if the response is OK
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Parse the JSON response
+            let result = await response.json();
+
+            // Log the success response
+            console.log("Resume uploaded successfully:", result);
+        } else {
+            console.log("No file selected.");
         }
 
-        let result = await response.json();
-        console.log("Success:", result);
     } catch (error) {
-        console.error("Fetch error:", error);
+        // Log any error that occurred
+        console.error("Error uploading resume:", error);
     }
 }
+
 
 
 async function fetchJobDescription() {
