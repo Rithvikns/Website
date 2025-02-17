@@ -1,8 +1,8 @@
 fastapi
 uvicorn
-openai
 pdfplumber
 beautifulsoup4
 requests
 python-multipart
 python-dotenv
+flask-cors
