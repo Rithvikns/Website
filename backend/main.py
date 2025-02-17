@@ -8,10 +8,13 @@ from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from flask_cors import CORS
 
-CORS(app)
 
 
 app = FastAPI()
+CORS(app)
+
+
+
 
 
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
