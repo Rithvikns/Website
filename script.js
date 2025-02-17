@@ -1,18 +1,26 @@
 const API_URL = "https://website-wlvy.onrender.com";
 
 async function uploadResume() {
-    let file = document.getElementById('resume').files[0];
-    let formData = new FormData();
-    formData.append("file", file);
+    try {
+        let formData = new FormData();
+        formData.append("resume", document.getElementById("resume").files[0]);
 
-    let response = await fetch(`${API_URL}/upload_resume/`, {
-        method: "POST",
-        body: formData
-    });
+        let response = await fetch(`${API_URL}/upload_resume/`, {
+            method: "POST",
+            body: formData
+        });
 
-    let data = await response.json();
-    localStorage.setItem("resume_text", data.resume_text);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let result = await response.json();
+        console.log("Success:", result);
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
 }
+
 
 async function fetchJobDescription() {
     let url = document.getElementById('job_url').value;
