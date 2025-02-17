@@ -10,17 +10,9 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-load_dotenv()
+
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
-allow_origins = ["https://rithvikns.github.io/Website/"] 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allow_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 if not HUGGINGFACE_TOKEN:
     raise ValueError("❌ Hugging Face token is missing! Set HUGGINGFACE_TOKEN in environment variables.")
