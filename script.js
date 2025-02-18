@@ -87,7 +87,7 @@ async function generateCoverLetter() {
             let data = await response.json();
             console.log("Generated Cover Letter:", data.cover_letter);
         } catch (error) {
-            console.error("Error generating the cover letter due to :", error);
+            console.error("Error generating the cover letter due to error:", error);
         }
     };
 }
