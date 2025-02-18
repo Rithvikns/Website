@@ -13,27 +13,16 @@ async function uploadResume() {
         console.log("Uploading file:", file.name);
         console.log("File type:", file.type);
 
-        let formData = new FormData();
-        formData.append("resume", file);
-
-        console.log("Sending request to:", `${API_URL}/upload_resume/`);
-
-        let response = await fetch(`${API_URL}/upload_resume/`, {
-            method: "POST",
-            body: formData
-        });
-
-        console.log("Raw response:", response);
-
-        if (!response.ok) {
-            let errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
+        // Display the uploaded file as a preview (only if it's a PDF)
+        if (file.type === "application/pdf") {
+            let fileURL = URL.createObjectURL(file);
+            document.getElementById("resumePreview").innerHTML = `
+                <iframe src="${fileURL}" width="100%" height="500px"></iframe>
+            `;
         }
 
-        let result = await response.json();
-        console.log("Resume uploaded successfully:", result);
     } catch (error) {
-        console.error("Error uploading resume:", error);
+        console.error("Error displaying resume:", error);
     }
 }
 
@@ -66,30 +55,37 @@ async function fetchJobDescription() {
 }
 
 
-async function generateCoverLetter(resume, jobDescription) {
-    try {
-        const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
+async function generateCoverLetter() {
+    let resumeInput = document.getElementById("resume");
+    let file = resumeInput.files[0];
+
+    if (!file) {
+        console.log("No resume uploaded.");
+        return;
+    }
+
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async function () {
+        let resumeData = reader.result.split(",")[1]; // Base64 encoding
+
+        let jobDescription = document.getElementById("job_description").innerText;
+
+        let response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ resume, job_description: jobDescription }),
+            body: JSON.stringify({ resume: resumeData, job_description: jobDescription }),
         });
 
-        console.log("Raw Response:", response);
+        let data = await response.json();
+        console.log("Generated Cover Letter:", data.cover_letter);
 
-        const data = await response.json();
-        console.log("API Response:", data);
-
-        if (response.ok && data.cover_letter) {
-            localStorage.setItem("cover_letter", data.cover_letter);
-            document.getElementById("cover_letter").innerText = data.cover_letter;
-        } else {
-            document.getElementById("cover_letter").innerText = `Error: ${data.detail || "Unknown error"}`;
-        }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        document.getElementById("cover_letter").innerText = "Error generating cover letter!";
-    }
+        // ✅ Clear resume preview after generating cover letter
+        document.getElementById("resumePreview").innerHTML = "";
+        resumeInput.value = "";
+    };
 }
+
 
