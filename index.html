@@ -13,7 +13,8 @@
         <!-- Upload Resume Section -->
         <div class="section">
             <h2>Upload Your Resume</h2>
-            <input type="file" id="resume">
+            <input type="file" id="resume" accept="application/pdf" onchange="uploadResume()" />
+            <div id="resumePreview"></div>
             <button onclick="uploadResume()">Upload Resume</button>
         </div>
 
@@ -33,7 +34,7 @@
                 Generate Cover Letter
             </button>
             <h3>Generated Cover Letter:</h3>
-            <pre id="cover_letter">Waiting for input...</pre>
+            <pre id="cover_letter">Want to generate cover letter in seconds , here is the solution ......</pre>
         </div>
     </div>
 
