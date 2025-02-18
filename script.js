@@ -71,14 +71,29 @@ async function fetchJobDescription() {
     }
 }
 async function generateCoverLetter(resume, jobDescription) {
-    const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ resume, job_description: jobDescription }),
-    });
+    try {
+        const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ resume, job_description: jobDescription }),
+        });
 
-    const data = await response.json();
-    console.log("Generated Cover Letter:", data.cover_letter);
+        console.log("Raw Response:", response);
+
+        const data = await response.json();
+        console.log("API Response:", data);
+
+        if (response.ok && data.cover_letter) {
+            localStorage.setItem("cover_letter", data.cover_letter);
+            document.getElementById("cover_letter").innerText = data.cover_letter;
+        } else {
+            document.getElementById("cover_letter").innerText = `Error: ${data.detail || "Unknown error"}`;
+        }
+    } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById("cover_letter").innerText = "Error generating cover letter!";
+    }
 }
+
