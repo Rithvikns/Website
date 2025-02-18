@@ -70,6 +70,8 @@ async function fetchJobDescription() {
         document.getElementById("job_description").innerText = "Error fetching job description!";
     }
 }
+
+
 async function generateCoverLetter(resume, jobDescription) {
     try {
         const response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
