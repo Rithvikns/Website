@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import fitz
+
 
 app = FastAPI()
 
@@ -58,6 +60,25 @@ def query_huggingface(payload):
     except (KeyError, IndexError):
         raise HTTPException(status_code=500, detail="Invalid response from Hugging Face API")
 
+
+
+@app.post("/upload_resume/")
+
+async def upload_resume(resume: UploadFile = File(...)):
+    try:
+        content = await resume.read()
+
+        if resume.filename.endswith(".pdf"):
+            pdf_document = fitz.open(stream=content, filetype="pdf")
+            text_content = "\n".join([page.get_text() for page in pdf_document])
+        else:
+            text_content = content.decode("utf-8", errors="ignore")
+
+        return {"resume_text": text_content}
+
+    except Exception as e:
+        return {"error": str(e)}
+        
 @app.post("/fetch_job_description/")
 async def fetch_job_description(url: str = Form(...)):
     headers = {'User-Agent': 'Mozilla/5.0'}
