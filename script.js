@@ -72,7 +72,7 @@ async function generateCoverLetter() {
         let jobDescription = document.getElementById("job_description").innerText;
 
         try {
-            let response = await fetch("https://https://website-wlvy.onrender.com/generate_cover_letter/", {
+            let response = await fetch("https://website-wlvy.onrender.com/generate_cover_letter/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
