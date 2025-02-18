@@ -71,21 +71,24 @@ async function generateCoverLetter() {
 
         let jobDescription = document.getElementById("job_description").innerText;
 
-        let response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ resume: resumeData, job_description: jobDescription }),
-        });
+        try {
+            let response = await fetch("https://your-render-url.onrender.com/generate_cover_letter/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ resume: resumeData, job_description: jobDescription }),
+            });
 
-        let data = await response.json();
-        console.log("Generated Cover Letter:", data.cover_letter);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
-        // ✅ Clear resume preview after generating cover letter
-        document.getElementById("resumePreview").innerHTML = "";
-        resumeInput.value = "";
+            let data = await response.json();
+            console.log("Generated Cover Letter:", data.cover_letter);
+        } catch (error) {
+            console.error("Error generating cover letter:", error);
+        }
     };
 }
-
 
