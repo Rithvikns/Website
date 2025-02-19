@@ -68,7 +68,8 @@ Ensure you have the following installed:
 
 # Block Diagram
 
-![image](https://github.com/user-attachments/assets/14d6bc69-04cb-4e87-bc63-ae315e5a963e)
+![image](https://github.com/user-attachments/assets/870cc9f0-90a1-4434-93a7-dc358e778142)
+
 
 User submits resume & job link → Sent via JavaScript.
 JavaScript makes an API request to the FastAPI backend (Render).
