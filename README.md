@@ -75,8 +75,6 @@ Ensure you have the following installed:
 Pull requests are welcome! For major changes, please open an issue first to discuss the improvements.
 
 ## License
-This project is licensed under the MIT License.
-
----
-Feel free to modify this README based on your project's specific details!
+Feel free to modify the code based on your project's specific details! or provide suggestions to improve the code . 
+!! Open for suggestions 
 
