@@ -66,6 +66,15 @@ Ensure you have the following installed:
 4. Click "Generate Cover Letter" to receive a customized cover letter.
 5. Download the generated document.
 
+# Block Diagram
+
+![image](https://github.com/user-attachments/assets/14d6bc69-04cb-4e87-bc63-ae315e5a963e)
+
+User submits resume & job link → Sent via JavaScript.
+JavaScript makes an API request to the FastAPI backend (Render).
+Backend processes the data using Hugging Face & LangChain.
+Generated cover letter is returned to the frontend.
+
 ## Future Improvements
 - Add user authentication for saving generated cover letters
 - Implement a database for storing resumes and past cover letters
