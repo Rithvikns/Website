@@ -68,7 +68,9 @@ Ensure you have the following installed:
 
 # Block Diagram
 
-![image](https://github.com/user-attachments/assets/870cc9f0-90a1-4434-93a7-dc358e778142)
+
+![image](https://github.com/user-attachments/assets/8d0a3fb2-3580-478a-af66-c0760aecf3bb)
+
 
 
 User submits resume & job link → Sent via JavaScript.
