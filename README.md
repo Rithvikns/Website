@@ -68,8 +68,7 @@ Ensure you have the following installed:
 
 # Block Diagram
 
-
-![image](https://github.com/user-attachments/assets/8d0a3fb2-3580-478a-af66-c0760aecf3bb)
+![image](https://github.com/user-attachments/assets/7b1515b0-a167-4e07-bd5d-75138daa57e9)
 
 
 
