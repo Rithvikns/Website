@@ -6,8 +6,14 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.prompts import PromptTemplate
 import fitz
 
+GOOGLE_API_KEY = "AIzaSyDHQ4oxBF3eYLy-vNKbA-U8AwhB2Eivm_E"
+
+# Initialize the Google PaLM (Gemini) model with API key
+llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY, temperature=0.7)
 
 app = FastAPI()
 
@@ -19,17 +25,6 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
-
-
-
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
-
-
-if not HUGGINGFACE_TOKEN:
-    raise ValueError("❌ Hugging Face token is missing! Set HUGGINGFACE_TOKEN in environment variables.")
-
-API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct"
-HEADERS = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
 
 # Request model
 class CoverLetterRequest(BaseModel):
@@ -114,8 +109,7 @@ async def generate_cover_letter(request: CoverLetterRequest):
             f"last paragraph is for thanks and asking for interview"
         )
 
-        # Call Hugging Face API
-        output = query_huggingface({"inputs": prompt})
+        output = llm.invoke(prompt)
 
         # Extract generated text
         generated_text = output[0]["generated_text"] if isinstance(output, list) else output
