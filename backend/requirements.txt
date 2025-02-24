@@ -6,3 +6,6 @@ requests
 python-multipart
 python-dotenv
 pymupdf
+langchain
+langchain-google-genai
+google-generativeai
